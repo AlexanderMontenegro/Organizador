@@ -63,10 +63,7 @@ def clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino):
     eliminar_carpetas_vacias(ruta_origen)
 
 # Ruta principal de origen y destino que deseas organizar
-# Las rutas se pasarán desde la interfaz de usuario
-if __name__ == "__main__":
-    import sys
-    ruta_origen = sys.argv[1]
-    ruta_destino = sys.argv[2]
+ruta_origen = 'D:\MULTIMEDIA\AnyDroid-Exportar-20241202'
+ruta_destino = 'D:\MULTIMEDIA\IMAGENES & VIDEOS & OTROS ORGANIZADOS'
 
-    clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino)
+clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino)
