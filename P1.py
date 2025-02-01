@@ -5,12 +5,12 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageTk
 
-# Función para obtener la fecha de creación del archivo
+# obtener la fecha de creación 
 def obtener_fecha_archivo(archivo):
     timestamp = os.path.getctime(archivo)
     return datetime.fromtimestamp(timestamp)
 
-# Función para eliminar carpetas vacías con manejo de errores
+# eliminar carpetas vacías con manejo de errores
 def eliminar_carpetas_vacias(ruta_principal):
     for carpeta_raiz, subcarpetas, archivos in os.walk(ruta_principal, topdown=False):
         try:
@@ -74,7 +74,7 @@ def clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino):
     eliminar_carpetas_vacias(ruta_origen)
     messagebox.showinfo("Completado", "Los archivos han sido clasificados y organizados.")
 
-# Funciones GUI
+# Funciones Usuario
 def seleccionar_ruta_origen():
     ruta = filedialog.askdirectory()
     entrada_origen.delete(0, tk.END)
@@ -95,8 +95,8 @@ def iniciar_clasificacion():
 
 # Configuración de la ventana principal
 ventana = tk.Tk()
-ventana.title("🚀 Organizador de Archivos Urbano")
-ventana.geometry("600x400")
+ventana.title("🚀 Organizador de Archivos ")
+ventana.geometry("700x400")
 ventana.configure(bg="#121212")
 
 # Estilos
@@ -126,7 +126,7 @@ estilo.configure("TEntry",
                  relief="solid",
                  insertcolor="white")
 
-# Cargar imagen del logo
+# logo
 try:
     imagen = Image.open("Milogo.png")
     imagen = imagen.resize((100, 100), Image.Resampling.LANCZOS)
@@ -136,7 +136,7 @@ try:
 except Exception as e:
     print(f"No se pudo cargar la imagen: {e}")
 
-# Widgets
+# Accesos
 ttk.Label(ventana, text="📂 Ruta de Origen:").grid(row=1, column=0, padx=10, pady=10)
 entrada_origen = ttk.Entry(ventana, width=40)
 entrada_origen.grid(row=1, column=1, padx=10, pady=10)
@@ -148,5 +148,7 @@ entrada_destino.grid(row=2, column=1, padx=10, pady=10)
 ttk.Button(ventana, text="📁 Seleccionar", command=seleccionar_ruta_destino).grid(row=2, column=2, padx=10, pady=10)
 
 ttk.Button(ventana, text="🚀 Iniciar Clasificación", command=iniciar_clasificacion).grid(row=3, column=1, pady=20)
+
+ventana.grid_propagate(False)
 
 ventana.mainloop()
