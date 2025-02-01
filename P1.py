@@ -23,7 +23,10 @@ def eliminar_carpetas_vacias(ruta_principal):
             print(f"Error al eliminar {carpeta_raiz}: {e}")
 
 # Función para clasificar archivos
-def clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino):
+def clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino, barra_progreso, etiqueta_progreso):
+    archivos_totales = sum([len(archivos) for _, _, archivos in os.walk(ruta_origen)])
+    archivos_procesados = 0
+
     for carpeta_raiz, subcarpetas, archivos in os.walk(ruta_origen):
         for archivo in archivos:
             if archivo.startswith(".lock"):  # Ignorar archivos en uso
@@ -71,6 +74,12 @@ def clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino):
             except Exception as e:
                 print(f"Error al mover {archivo}: {e}")
 
+            archivos_procesados += 1
+            progreso = (archivos_procesados / archivos_totales) * 100
+            barra_progreso['value'] = progreso
+            etiqueta_progreso.config(text=f"Progreso: {int(progreso)}%")
+            ventana.update_idletasks()
+
     eliminar_carpetas_vacias(ruta_origen)
     messagebox.showinfo("Completado", "Los archivos han sido clasificados y organizados.")
 
@@ -89,14 +98,16 @@ def iniciar_clasificacion():
     ruta_origen = entrada_origen.get()
     ruta_destino = entrada_destino.get()
     if ruta_origen and ruta_destino:
-        clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino)
+        barra_progreso['value'] = 0
+        etiqueta_progreso.config(text="Progreso: 0%")
+        clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino, barra_progreso, etiqueta_progreso)
     else:
         messagebox.showwarning("Advertencia", "Por favor, selecciona ambas rutas.")
 
 # Configuración de la ventana principal
 ventana = tk.Tk()
 ventana.title("🚀 Organizador de Archivos ")
-ventana.geometry("700x400")
+ventana.geometry("700x450")
 ventana.configure(bg="#121212")
 
 # Estilos
@@ -148,6 +159,14 @@ entrada_destino.grid(row=2, column=1, padx=10, pady=10)
 ttk.Button(ventana, text="📁 Seleccionar", command=seleccionar_ruta_destino).grid(row=2, column=2, padx=10, pady=10)
 
 ttk.Button(ventana, text="🚀 Iniciar Clasificación", command=iniciar_clasificacion).grid(row=3, column=1, pady=20)
+
+# Barra de progreso
+barra_progreso = ttk.Progressbar(ventana, orient="horizontal", length=400, mode="determinate")
+barra_progreso.grid(row=4, column=0, columnspan=3, pady=10)
+
+# Etiqueta de progreso
+etiqueta_progreso = ttk.Label(ventana, text="Progreso: 0%", style="TLabel")
+etiqueta_progreso.grid(row=5, column=0, columnspan=3, pady=10)
 
 ventana.grid_propagate(False)
 
