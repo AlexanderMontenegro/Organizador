@@ -63,7 +63,7 @@ def clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino):
     eliminar_carpetas_vacias(ruta_origen)
 
 # Ruta principal de origen y destino que deseas organizar
-ruta_origen = 'D:\MULTIMEDIA\MUSICA'
-ruta_destino = 'D:\MULTIMEDIA\MUSICA\p1'
+ruta_origen = '..'
+ruta_destino = '...'
 
 clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino)
