@@ -1,14 +1,9 @@
 import os
 import shutil
-from datetime import datetime
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageTk
 
-# obtener la fecha de creación 
-def obtener_fecha_archivo(archivo):
-    timestamp = os.path.getctime(archivo)
-    return datetime.fromtimestamp(timestamp)
 
 # eliminar carpetas vacías con manejo de errores
 def eliminar_carpetas_vacias(ruta_principal):
@@ -22,8 +17,9 @@ def eliminar_carpetas_vacias(ruta_principal):
         except Exception as e:
             print(f"Error al eliminar {carpeta_raiz}: {e}")
 
-# Función para clasificar archivos
-def clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino, barra_progreso, etiqueta_progreso):
+
+# Función para clasificar archivos  por tipo
+def clasificar_archivos_por_tipo(ruta_origen, ruta_destino, barra_progreso, etiqueta_progreso):
     archivos_totales = sum([len(archivos) for _, _, archivos in os.walk(ruta_origen)])
     archivos_procesados = 0
 
@@ -36,30 +32,29 @@ def clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino, barra_progre
             ruta_archivo = os.path.join(carpeta_raiz, archivo)
             extension = os.path.splitext(archivo)[1].lower()
 
-            if extension in ['.jpeg', '.jpg', '.png', '.gif']:
+            # Clasificación por tipo
+            if extension in ['.jpeg', '.jpg', '.png', '.gif', '.webp']:
                 tipo = 'Imagenes'
-            elif extension in ['.txt', '.pdf', '.docx', '.xlsx']:
+            elif extension in ['.txt', '.pdf', '.docx', '.xlsx', '.doc', '.odt']:
                 tipo = 'Documentos'
-            elif extension in ['.mp3', '.wav']:
+            elif extension in ['.mp3', '.wav', '.flac', '.m4a']:
                 tipo = 'Audio'
-            elif extension in ['.mp4', '.avi', '.opus']:
+            elif extension in ['.mp4', '.avi', '.mkv', '.mov', '.opus', '.webm']:
                 tipo = 'Videos'
             elif extension in ['.apk']:
                 tipo = 'Apk'
-            elif extension in ['.html']:
+            elif extension in ['.html', '.htm']:
                 tipo = 'Html'
-            elif extension in ['.zip', '.rar', '.csv']:
+            elif extension in ['.zip', '.rar', '.7z', '.tar', '.gz']:
                 tipo = 'Archivos_Comprimidos'
-            elif extension in ['.psd', '.pptx']:
+            elif extension in ['.psd', '.pptx', '.ai', '.fig']:
                 tipo = 'Diseño'
             else:
                 tipo = 'Otros'
 
-            fecha_modificacion = obtener_fecha_archivo(ruta_archivo)
-            anio = fecha_modificacion.strftime('%Y')
-            mes = fecha_modificacion.strftime('%m')
-
-            nueva_carpeta = os.path.join(ruta_destino, tipo, f'{anio}-{mes}')
+            # Nueva carpeta: solo por tipo 
+            nueva_carpeta = os.path.join(ruta_destino, tipo)
+            
             try:
                 os.makedirs(nueva_carpeta, exist_ok=True)
             except Exception as e:
@@ -81,9 +76,11 @@ def clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino, barra_progre
             ventana.update_idletasks()
 
     eliminar_carpetas_vacias(ruta_origen)
-    messagebox.showinfo("Completado", "Los archivos han sido clasificados y organizados.")
+    messagebox.showinfo("Completado", "Los archivos han sido clasificados y organizados por tipo.")
 
-# Funciones Usuario
+
+# ==================== FUNCIONES DE LA INTERFAZ ====================
+
 def seleccionar_ruta_origen():
     ruta = filedialog.askdirectory()
     entrada_origen.delete(0, tk.END)
@@ -100,11 +97,13 @@ def iniciar_clasificacion():
     if ruta_origen and ruta_destino:
         barra_progreso['value'] = 0
         etiqueta_progreso.config(text="Progreso: 0%")
-        clasificar_archivos_por_tipo_y_fecha(ruta_origen, ruta_destino, barra_progreso, etiqueta_progreso)
+        clasificar_archivos_por_tipo(ruta_origen, ruta_destino, barra_progreso, etiqueta_progreso)
     else:
         messagebox.showwarning("Advertencia", "Por favor, selecciona ambas rutas.")
 
-# Configuración de la ventana principal
+
+# ==================== VENTANA PRINCIPAL ====================
+
 ventana = tk.Tk()
 ventana.title("🚀 Organizador de Archivos ")
 ventana.geometry("700x450")
@@ -137,7 +136,7 @@ estilo.configure("TEntry",
                  relief="solid",
                  insertcolor="white")
 
-# logo
+# Logo
 try:
     imagen = Image.open("Milogo.png")
     imagen = imagen.resize((100, 100), Image.Resampling.LANCZOS)
@@ -169,5 +168,4 @@ etiqueta_progreso = ttk.Label(ventana, text="Progreso: 0%", style="TLabel")
 etiqueta_progreso.grid(row=5, column=0, columnspan=3, pady=10)
 
 ventana.grid_propagate(False)
-
 ventana.mainloop()
